@@ -1,0 +1,55 @@
+<h1>-My page-</h1>
+<p>Name : <%= @user.name %></p>
+<p>Mail Address : <%= @user.email %></p>
+<p>Profile : <%= @user.profile %></p>
+<div class="photo">
+    <%= image_tag @user.image_url, size: "200x200", id: "user_image" if @user.image? %>
+</div>
+
+<% if current_user.id == @user.id %>
+  <%= link_to "Edit", edit_user_registration_path %>
+<% end %>
+
+<h2>-Your Posted List-</h2>
+<% @user.dogs.each do |t| %>
+  <%= t.user.name %>
+  <%= t.body %>
+<% end %>
+
+<h2>-Your Liked List-</h2>
+<div class="container">
+  <div class="row">
+    <% @user.liked_dogs.each do |t| %>
+     <div class="tweet col-md-6">
+        <div class="gonta-a">
+          <%= t.user.name %>
+        </div>
+        <div class="gonta-b">
+          <%= t.body %>
+        </div>
+        <div class="gonta-c">
+          <%= image_tag t.image_url, class:"image-a", size: "250x200" if t.image? %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% if @user.id == current_user.id %>
+
+<% else %>
+  <% if @isRoom == true %>
+    <p><a href="/rooms/<%= @roomId %>">チャットへ</a>
+  <% else %>
+    <%= form_for @room do |f| %>
+      <%= fields_for @entry do |e| %>
+        <%= e.hidden_field :user_id, :value=> @user.id %>
+      <% end %>
+      <%= f.submit "チャットを始める" %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= link_to "ユーザー一覧に戻る", users_path %>
+
+<%= link_to "Go Back to Post List", dogs_path %>

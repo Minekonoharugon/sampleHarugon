@@ -1,0 +1,54 @@
+<br>
+<br>
+<h3>-Search Post-</h3>
+ <%= form_tag({controller:"dogs",action:"index"}, method: :get) do %>
+   <%= text_field_tag :search %>
+   <%= submit_tag ' Search '  %>
+<% end %>
+<%= link_to "New Post", new_dog_path %>
+<div class="dogs-container">
+<% if user_signed_in? %>
+<%= link_to "My Page", user_path(current_user.id) %>　
+<% end %>
+<br>
+<br>
+<h3>-Post List-</h3>
+<div class="container">
+   <div class="row">
+      <% @dogs.each do |t| %>
+         <div class="tweet col-md-6">
+         <div class="haruko-a">
+            <%= t.body %>
+         </div>
+         <div class="haruko-b">
+            <%= t.created_at %>
+         </div>
+         <div class="haruko-c">
+            <%= t.user.email %>
+         </div>
+         <div class="haruko-d">
+            <%= image_tag t.image_url, size: "250x200" if t.image? %>
+         </div>
+            <% if user_signed_in? %>
+               <% if current_user.already_liked?(t) %>
+                  <%= link_to dog_like_path(id: t.id, dog_id: t.id), method: :delete do %>
+                     <i class="fas fa-heart"></i><%= t.likes.count %>
+                  <% end %>
+               <% else %>
+                  <%= link_to dog_likes_path(id: t.id, dog_id: t.id), method: :post do %>
+                     <i class="far fa-heart"></i><%= t.likes.count %>
+                  <% end %>
+               <% end %>
+            <% else %>
+               <i class="far fa-heart"></i><%= t.likes.count %>
+            <% end %>
+            
+            <%= link_to "Detail", dog_path(t.id) %>
+            <% if user_signed_in? && current_user.id == t.user_id %>
+               <%= link_to "Edit", edit_dog_path(t.id) %>
+               <%= button_to "Delete", dog_path(t.id), method: :delete %>
+            <% end %> 
+         </div>
+      <% end %>
+   </div>
+</div>
